@@ -3,16 +3,18 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
-import React, { useState } from 'react';
+import React, {useState } from 'react';
 import { ActivityIndicator, NativeModules, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RootStackParamList } from '../../navigation/type';
 import { BleManager } from 'react-native-ble-plx';
 import CustomAlert from '../../modals/alert';
+import { requestPermissions } from '../../permission';
 
 interface HomeProps {
 }
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 const Home: React.FC<HomeProps> = () => {
+
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [startConnection,setStartConnection] = useState(false);
   const [modalVisible,setModalVisible] = useState(false);
@@ -20,16 +22,16 @@ const Home: React.FC<HomeProps> = () => {
   const bleManager = new BleManager();
   let deviceUUID : string;
   const scanConnect = async () => {
+    const permissionGrand = await requestPermissions();
+    if (permissionGrand){
     try {
       deviceUUID = await AcresBLE.findDevice();
       navigation.navigate('Funding',{
         deviceUUID,
+        from:'Acres BLE'
       });
     }
     catch(sdkError){
-            navigation.navigate('Funding',{
-        deviceUUID,
-      });
       console.error('Error using Acres SDK to find device:', sdkError);
       bleManager.startDeviceScan(null,null,(error,device)=>{
           if (error){
@@ -40,10 +42,12 @@ const Home: React.FC<HomeProps> = () => {
             deviceUUID = device.id;
             navigation.navigate('Funding',{
               deviceUUID,
+              from:'BLE Manager'
             });
           }
       });
     }
+  }
   };
   return (
     <SafeAreaView style={styles.container}>

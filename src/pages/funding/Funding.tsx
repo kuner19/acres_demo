@@ -2,7 +2,7 @@
 
 import { RouteProp, useRoute } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import React, {useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { ActivityIndicator, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RootStackParamList } from '../../navigation/type';
 import CustomAlert from '../../modals/alert';
@@ -16,8 +16,13 @@ const Funding: React.FC<FundingProps> = ({ }) => {
   const [modalVisible,setModalVisible] = useState(false);
   const [startFund,setStartFund] = useState(false);
   const [message, setMessage] = useState('');
-  const { deviceUUID } = route.params;
+  const { deviceUUID,from } = route.params;
 
+
+  useEffect(()=>{
+      setMessage(`deviceUUID : ${deviceUUID} , from : ${from}`);
+      setModalVisible(true);
+  },[deviceUUID,from]);
   const fund = async () => {
         const payload = {
         UUID: deviceUUID,

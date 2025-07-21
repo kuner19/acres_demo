@@ -1,4 +1,4 @@
 export type RootStackParamList = {
   Home: undefined;
-  Funding: {deviceUUID:string};
+  Funding: {deviceUUID:string,from:string};
 };
