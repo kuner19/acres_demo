@@ -23,6 +23,7 @@ target 'Demo' do
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
+    :hermes_enabled => false,
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
