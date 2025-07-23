@@ -48,8 +48,13 @@ const Funding: React.FC<FundingProps> = ({ }) => {
         }
       );
       let result = await response.json();
-      setMessage('Successfully fund');
-      setModalVisible(true);
+      if(result.error){
+        setMessage(`${result.error} uuid:${result.uuid}`);
+        setModalVisible(true);
+      } else {
+          setMessage(`'Sucessfully fund uuid:${result?.uuid}' | `);
+          setModalVisible(true);
+      }
       }catch(error){
         setMessage('Unable to fund');
         setModalVisible(true);
@@ -81,8 +86,14 @@ const Funding: React.FC<FundingProps> = ({ }) => {
         }
       );
       let result = await response.json();
-      setMessage('Sucessfully withdraw');
-      setModalVisible(true);
+      if(result.error){
+        setMessage(`${result.error} uuid:${result.uuid}`);
+        setModalVisible(true);
+      } else {
+          setMessage(`'Sucessfully withdraw uuid:${result?.uuid}`);
+          setModalVisible(true);
+      }
+
       }catch(error){
         setMessage('Unable withdraw');
         setModalVisible(true);
