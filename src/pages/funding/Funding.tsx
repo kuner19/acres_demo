@@ -16,7 +16,7 @@ const Funding: React.FC<FundingProps> = ({ }) => {
   const [modalVisible,setModalVisible] = useState(false);
   const [startFund,setStartFund] = useState(false);
   const [message, setMessage] = useState('');
-  const { deviceUUID,from } = route.params;
+  const { deviceUUID,from,connectedDevice } = route.params;
 
 
   useEffect(()=>{
@@ -49,10 +49,12 @@ const Funding: React.FC<FundingProps> = ({ }) => {
       );
       let result = await response.json();
       if(result.error){
-        setMessage(`${result.error} uuid:${result.uuid}`);
+        setMessage(`${result.error} uuid:${deviceUUID}`);
+        console.log(result);
         setModalVisible(true);
       } else {
-          setMessage(`'Sucessfully fund uuid:${result?.uuid}' | `);
+        console.log(result);
+          setMessage(`'Sucessfully fund $20.00 uuid:${deviceUUID}' | `);
           setModalVisible(true);
       }
       }catch(error){
@@ -87,10 +89,12 @@ const Funding: React.FC<FundingProps> = ({ }) => {
       );
       let result = await response.json();
       if(result.error){
-        setMessage(`${result.error} uuid:${result.uuid}`);
+        setMessage(`${result.error} uuid:${deviceUUID}`);
         setModalVisible(true);
       } else {
-          setMessage(`'Sucessfully withdraw uuid:${result?.uuid}`);
+        console.log(result);
+          await connectedDevice.cancelConnection();
+          setMessage(`'Sucessfully withdraw $20.00 uuid:${deviceUUID}' | `);
           setModalVisible(true);
       }
 
