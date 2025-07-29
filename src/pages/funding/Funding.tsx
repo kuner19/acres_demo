@@ -1,16 +1,19 @@
 /* eslint-disable react-native/no-inline-styles */
 
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import React, {useEffect, useState } from 'react';
 import { ActivityIndicator, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RootStackParamList } from '../../navigation/type';
 import CustomAlert from '../../modals/alert';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface FundingProps {}
 type FundingRouteProp = RouteProp<RootStackParamList, 'Funding'>;
+type FundGamplayScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'FundGameplay'>;
 
 const Funding: React.FC<FundingProps> = ({ }) => {
+  const navigation = useNavigation<FundGamplayScreenNavigationProp>();
   const route = useRoute<FundingRouteProp>();
   const [startWithdraw,setStartWithdraw] = useState(false);
   const [modalVisible,setModalVisible] = useState(false);
@@ -23,85 +26,18 @@ const Funding: React.FC<FundingProps> = ({ }) => {
       setMessage(`deviceUUID : ${deviceUUID} , from : ${from}`);
       setModalVisible(true);
   },[deviceUUID,from]);
+
+
   const fund = async () => {
-        const payload = {
-        UUID: deviceUUID,
-        PlayerId: '1234567890842456',
-        PlayerAccountNumber: '1234567890842456',
-        Destination: 'TO_EGM',
-        SASSERIAL:
-          deviceUUID === 'EFF5EF7D-FD6B-3982-C8F1-922B8CED6F2C'
-            ? 'm1:KG:000151641'
-            : 'm1:KG:000141793',
-        ReferenceId: 'any reference string',
-        CashableCents: Math.round(parseFloat('20') * 100),
-        NonRestrictedCents: 0,
-        RestrictedCents: 0,
-      };
-      try {
-        const response = await fetch(
-        'https://konnect-cgi-acres-dev.koinpayments.io/cts/funds/egm',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }
-      );
-      let result = await response.json();
-      if(result.error){
-        setMessage(`${result.error} uuid:${deviceUUID}`);
-        console.log(result);
-        setModalVisible(true);
-      } else {
-        console.log(result);
-          setMessage(`'Sucessfully fund $20.00 uuid:${deviceUUID}' | `);
-          setModalVisible(true);
-      }
-      }catch(error){
-        setMessage('Unable to fund');
-        setModalVisible(true);
-      }
+            navigation.navigate('FundGameplay', {
+            connectedDevice,
+          });
 };
 
   const withdraw = async () => {
-        const payload = {
-        UUID: deviceUUID,
-        PlayerId: '1234567890842456',
-        PlayerAccountNumber: '1234567890842456',
-        Destination: 'TO_EXTERNAL_ACCOUNT',
-        SASSERIAL:
-          deviceUUID === 'EFF5EF7D-FD6B-3982-C8F1-922B8CED6F2C'
-            ? 'm1:KG:000151641'
-            : 'm1:KG:000141793',
-        ReferenceId: 'any reference string',
-        CashableCents: Math.round(parseFloat('20') * 100),
-        NonRestrictedCents: 0,
-        RestrictedCents: 0,
-      };
-      try {
-        const response = await fetch(
-        'https://konnect-cgi-acres-dev.koinpayments.io/cts/funds/egm',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }
-      );
-      let result = await response.json();
-      if(result.error){
-        setMessage(`${result.error} uuid:${deviceUUID}`);
-        setModalVisible(true);
-      } else {
-        console.log(result);
-          await connectedDevice.cancelConnection();
-          setMessage(`'Sucessfully withdraw $20.00 uuid:${deviceUUID}' | `);
-          setModalVisible(true);
-      }
-
-      }catch(error){
-        setMessage('Unable withdraw');
-        setModalVisible(true);
-      }
+            navigation.navigate('WithdrawGameplay', {
+            connectedDevice,
+          });
 };
 
   return (
@@ -118,8 +54,7 @@ const Funding: React.FC<FundingProps> = ({ }) => {
         </View>
                 <View>
             <TouchableOpacity onPress={()=>{
-              fund()
-              setStartFund(!startFund);
+              fund();
             }} style={styles.button}>
               <Text style={{color:'white'}}>
                 {startFund ? '' : 'Fund Game'}
@@ -128,7 +63,6 @@ const Funding: React.FC<FundingProps> = ({ }) => {
             </TouchableOpacity>
               <TouchableOpacity onPress={()=>{
                 withdraw();
-              setStartWithdraw(!startWithdraw);
             }} style={styles.button}>
               <Text style={{color:'white'}}>
                 {startWithdraw ? '' : 'Withdraw Game'}

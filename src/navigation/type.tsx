@@ -3,4 +3,6 @@ export type RootStackParamList = {
   Funding: {deviceUUID:string,from:string,rssi:any,
     connectedDevice:any;
   };
+  FundGameplay: {connectedDevice:any}
+  WithdrawGameplay: {connectedDevice:any}
 };
